@@ -85,6 +85,16 @@ public class LinkedList extends Throwable implements List, Deque {
         ++numberOfElements;
     }
 
+    private Object getElement(int index) {
+        if (index > size())
+            throw new IndexOutOfBoundsException();
+        LinkedListElement current = first;
+        for (int i = 0; i < index; i++) {
+            current = current.getNext();
+        }
+        return current;
+    }
+
     @Override
     public Object get(int index) {
         if (index > size())
@@ -93,7 +103,7 @@ public class LinkedList extends Throwable implements List, Deque {
         for (int i = 0; i < index; i++) {
             current = current.getNext();
         }
-        return current;
+        return current.getData();
     }
 
     @Override
@@ -120,13 +130,13 @@ public class LinkedList extends Throwable implements List, Deque {
 
     @Override
     public void replace(int index, Object obj) {
-        LinkedListElement current = (LinkedListElement) get(index);
+        LinkedListElement current = (LinkedListElement) getElement(index);
         current.setData(obj);
     }
 
     @Override
     public void remove(int index) {
-        LinkedListElement current = (LinkedListElement) get(index);
+        LinkedListElement current = (LinkedListElement) getElement(index);
         LinkedListElement next = current.getNext();
         LinkedListElement prev = current.getPrev();
         next.setPrev(prev);
@@ -137,8 +147,8 @@ public class LinkedList extends Throwable implements List, Deque {
     @Override
     public List subList(int from, int to) {
         LinkedList subList = new LinkedList();
-        LinkedListElement last = (LinkedListElement)get(to);
-        for (LinkedListElement current = (LinkedListElement) get(from); current != last; current = current.getNext()) {
+        LinkedListElement last = (LinkedListElement)getElement(to);
+        for (LinkedListElement current = (LinkedListElement) getElement(from); current != last; current = current.getNext()) {
             subList.addLast(current.getData());
         }
         return subList;
