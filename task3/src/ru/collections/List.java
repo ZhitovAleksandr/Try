@@ -1,9 +1,11 @@
 package ru.collections;
 
+import ru.Collection;
+
 /**
  * Created by student10 on 22.03.2017.
  */
-public interface List {
+public interface List extends Collection {
 
     void add(int index, Object item);
 

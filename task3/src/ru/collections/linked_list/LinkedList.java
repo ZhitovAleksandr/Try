@@ -3,6 +3,11 @@ package ru.collections.linked_list;
 import ru.collections.Deque;
 import ru.collections.List;
 
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+
 /**
  * Created by student10 on 22.03.2017.
  */
@@ -45,12 +50,14 @@ public class LinkedList extends Throwable implements List, Deque {
     @Override
     public void removeFirst() {
         first = first.getNext();
+        first.setPrev(null);
         --numberOfElements;
     }
 
     @Override
     public void removeLast() {
         last = last.getPrev();
+        last.setNext(null);
         --numberOfElements;
     }
 
@@ -66,16 +73,16 @@ public class LinkedList extends Throwable implements List, Deque {
 
     @Override
     public Object pullFirst() {
-        Object prevFirstData = first.getData();
+        Object firstData = first.getData();
         removeFirst();
-        return prevFirstData;
+        return firstData;
     }
 
     @Override
     public Object pullLast() {
-        Object prevLastData = last.getData();
+        Object lastData = last.getData();
         removeLast();
-        return prevLastData;
+        return lastData;
     }
 
     @Override
@@ -85,7 +92,7 @@ public class LinkedList extends Throwable implements List, Deque {
         else if (index == size()) addLast(item);
         else if (index == 0) addFirst(item);
         else {
-            Node prevElement = (Node)getElement(index - 1);
+            Node prevElement = getNode(index - 1);
             Node nextElement = prevElement.getNext();
             Node newElement = new Node(item);
             nextElement.setPrev(newElement);
@@ -96,7 +103,7 @@ public class LinkedList extends Throwable implements List, Deque {
         }
     }
 
-    private Object getElement(int index) {
+    private Node getNode(int index) {
         if (index >= size())
             throw new IndexOutOfBoundsException();
         Node current = first;
@@ -108,7 +115,7 @@ public class LinkedList extends Throwable implements List, Deque {
 
     @Override
     public Object get(int index) {
-        return ((Node)getElement(index)).getData();
+        return getNode(index).getData();
     }
 
     @Override
@@ -135,8 +142,7 @@ public class LinkedList extends Throwable implements List, Deque {
 
     @Override
     public void replace(int index, Object obj) {
-        Node current = (Node) getElement(index);
-        current.setData(obj);
+        getNode(index).setData(obj);
     }
 
     @Override
@@ -146,7 +152,7 @@ public class LinkedList extends Throwable implements List, Deque {
         else if (index == 0)
             removeFirst();
         else {
-            Node current = (Node) getElement(index);
+            Node current = getNode(index);
             Node next = current.getNext();
             Node prev = current.getPrev();
             next.setPrev(prev);
@@ -158,15 +164,101 @@ public class LinkedList extends Throwable implements List, Deque {
     @Override
     public List subList(int from, int to) {
         LinkedList subList = new LinkedList();
-        Node last = ((Node)getElement(to)).getNext();
-        for (Node current = (Node) getElement(from); current != last; current = current.getNext()) {
+        Node last = getNode(to).getNext();
+        for (Node current = getNode(from); current != last; current = current.getNext()) {
             subList.addLast(current.getData());
         }
         return subList;
     }
 
     @Override
+    public void add(Object item) {
+        addLast(item);
+    }
+
+    @Override
+    public void clear() {
+        initList(null);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return size() > 0;
+    }
+
+    @Override
+    public boolean remove(Object obj) {
+        int index = indexOf(obj);
+        if (index == 0) return false;
+        remove(index);
+        return true;
+    }
+
+    @Override
     public int size() {
         return numberOfElements;
+    }
+
+    public class LinkedListIterator implements ListIterator
+    {
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public Object next() {
+            return null;
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return false;
+        }
+
+        @Override
+        public Object previous() {
+            return null;
+        }
+
+        @Override
+        public int nextIndex() {
+            return 0;
+        }
+
+        @Override
+        public int previousIndex() {
+            return 0;
+        }
+
+        @Override
+        public void remove() {
+
+        }
+
+        @Override
+        public void set(Object o) {
+
+        }
+
+        @Override
+        public void add(Object o) {
+
+        }
+    }
+
+    @Override
+    public Iterator iterator() {
+        return null;
+    }
+
+    @Override
+    public void forEach(Consumer action) {
+
+    }
+
+    @Override
+    public Spliterator spliterator() {
+        return null;
     }
 }

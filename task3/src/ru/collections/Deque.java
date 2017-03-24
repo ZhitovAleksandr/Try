@@ -1,9 +1,11 @@
 package ru.collections;
 
+import ru.Collection;
+
 /**
  * Created by student10 on 22.03.2017.
  */
-public interface Deque {
+public interface Deque extends Collection {
 
     void addFirst(Object item);
 
