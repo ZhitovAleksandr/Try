@@ -7,29 +7,38 @@ import ru.collections.List;
  * Created by student10 on 22.03.2017.
  */
 public class LinkedList extends Throwable implements List, Deque {
-    private LinkedListElement first;
-    private LinkedListElement last;
+    private Node first;
+    private Node last;
     private int numberOfElements;
 
     public LinkedList() {
         numberOfElements = 0;
     }
 
+    private void initList(Node item) {
+        first = item;
+        last = item;
+    }
+
     @Override
     public void addFirst(Object item) {
-        LinkedListElement newElement = new LinkedListElement(item);
-        first.setPrev(newElement);
-        newElement.setNext(first);
-        first = newElement;
+        Node newElement = new Node(item);
+        if (first != null) {
+            first.setPrev(newElement);
+            newElement.setNext(first);
+            first = newElement;
+        } else initList(newElement);
         ++numberOfElements;
     }
 
     @Override
     public void addLast(Object item) {
-        LinkedListElement newElement = new LinkedListElement(item);
-        last.setNext(newElement);
-        newElement.setPrev(last);
-        last = newElement;
+        Node newElement = new Node(item);
+        if (last != null) {
+            last.setNext(newElement);
+            newElement.setPrev(last);
+            last = newElement;
+        } else initList(newElement);
         ++numberOfElements;
     }
 
@@ -59,7 +68,6 @@ public class LinkedList extends Throwable implements List, Deque {
     public Object pullFirst() {
         Object prevFirstData = first.getData();
         removeFirst();
-        --numberOfElements;
         return prevFirstData;
     }
 
@@ -67,7 +75,6 @@ public class LinkedList extends Throwable implements List, Deque {
     public Object pullLast() {
         Object prevLastData = last.getData();
         removeLast();
-        --numberOfElements;
         return prevLastData;
     }
 
@@ -75,20 +82,24 @@ public class LinkedList extends Throwable implements List, Deque {
     public void add(int index, Object item) {
         if (index > size())
             throw new IndexOutOfBoundsException();
-        LinkedListElement prevElement = first;
-        for (int i = 0; i < index; ++i)
-            prevElement = first.getNext();
-        LinkedListElement nextElement = prevElement.getNext();
-        LinkedListElement newElement = new LinkedListElement(item);
-        nextElement.setNext(newElement);
-        prevElement.setPrev(newElement);
-        ++numberOfElements;
+        else if (index == size()) addLast(item);
+        else if (index == 0) addFirst(item);
+        else {
+            Node prevElement = (Node)getElement(index - 1);
+            Node nextElement = prevElement.getNext();
+            Node newElement = new Node(item);
+            nextElement.setPrev(newElement);
+            prevElement.setNext(newElement);
+            newElement.setNext(nextElement);
+            newElement.setPrev(prevElement);
+            ++numberOfElements;
+        }
     }
 
     private Object getElement(int index) {
-        if (index > size())
+        if (index >= size())
             throw new IndexOutOfBoundsException();
-        LinkedListElement current = first;
+        Node current = first;
         for (int i = 0; i < index; i++) {
             current = current.getNext();
         }
@@ -97,20 +108,14 @@ public class LinkedList extends Throwable implements List, Deque {
 
     @Override
     public Object get(int index) {
-        if (index > size())
-            throw new IndexOutOfBoundsException();
-        LinkedListElement current = first;
-        for (int i = 0; i < index; i++) {
-            current = current.getNext();
-        }
-        return current.getData();
+        return ((Node)getElement(index)).getData();
     }
 
     @Override
     public int indexOf(Object obj) {
         int index = 0;
-        for (LinkedListElement current = first; current != null; current = current.getNext()){
-            if (current.equals(obj))
+        for (Node current = first; current != null; current = current.getNext()){
+            if (current.getData().equals(obj))
                 return index;
             ++index;
         }
@@ -120,8 +125,8 @@ public class LinkedList extends Throwable implements List, Deque {
     @Override
     public int lastIndexOf(Object obj) {
         int index = size() - 1;
-        for (LinkedListElement current = last; current != null; current = current.getPrev()){
-            if (current.equals(obj))
+        for (Node current = last; current != null; current = current.getPrev()){
+            if (current.getData().equals(obj))
                 return index;
             --index;
         }
@@ -130,25 +135,31 @@ public class LinkedList extends Throwable implements List, Deque {
 
     @Override
     public void replace(int index, Object obj) {
-        LinkedListElement current = (LinkedListElement) getElement(index);
+        Node current = (Node) getElement(index);
         current.setData(obj);
     }
 
     @Override
     public void remove(int index) {
-        LinkedListElement current = (LinkedListElement) getElement(index);
-        LinkedListElement next = current.getNext();
-        LinkedListElement prev = current.getPrev();
-        next.setPrev(prev);
-        prev.setNext(next);
-        --numberOfElements;
+        if (index == size() - 1)
+            removeLast();
+        else if (index == 0)
+            removeFirst();
+        else {
+            Node current = (Node) getElement(index);
+            Node next = current.getNext();
+            Node prev = current.getPrev();
+            next.setPrev(prev);
+            prev.setNext(next);
+            --numberOfElements;
+        }
      }
 
     @Override
     public List subList(int from, int to) {
         LinkedList subList = new LinkedList();
-        LinkedListElement last = (LinkedListElement)getElement(to);
-        for (LinkedListElement current = (LinkedListElement) getElement(from); current != last; current = current.getNext()) {
+        Node last = ((Node)getElement(to)).getNext();
+        for (Node current = (Node) getElement(from); current != last; current = current.getNext()) {
             subList.addLast(current.getData());
         }
         return subList;

@@ -3,12 +3,12 @@ package ru.collections.linked_list;
 /**
  * Created by student10 on 22.03.2017.
  */
-public class LinkedListElement {
-    private LinkedListElement next;
-    private LinkedListElement prev;
+public class Node {
+    private Node next;
+    private Node prev;
     private Object data;
 
-    LinkedListElement(Object data){
+    Node(Object data){
         this.data = data;
     }
 
@@ -16,11 +16,11 @@ public class LinkedListElement {
         this.data = data;
     }
 
-    public void setNext(LinkedListElement next) {
+    public void setNext(Node next) {
         this.next = next;
     }
 
-    public void setPrev(LinkedListElement prev) {
+    public void setPrev(Node prev) {
         this.prev = prev;
     }
 
@@ -28,11 +28,11 @@ public class LinkedListElement {
         return this.data;
     }
 
-    public LinkedListElement getNext() {
+    public Node getNext() {
         return this.next;
     }
 
-    public LinkedListElement getPrev() {
+    public Node getPrev() {
         return this.prev;
     }
 }
